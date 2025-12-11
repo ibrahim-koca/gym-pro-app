@@ -2,7 +2,7 @@
 
 GymPro, spor salonundaki antrenmanlarınızı kağıt-kalem kullanmadan, en modern ve hızlı şekilde takip etmenizi sağlayan, tamamen çevrimdışı çalışabilen bir **Progressive Web App (PWA)** uygulamasıdır.
 
-🔗 **Canlı Demo:** [Uygulamayı Buradan Dene](https://[kullaniciadi].github.io/[repo-adi])
+🔗 **Canlı Demo:** [Uygulamayı Buradan Dene](https://ibrahim-koca.github.io/gym-pro-app)
 
 ![GymPro Cover](https://via.placeholder.com/800x400?text=GymPro+App+Screenshot+Here)
 *(Buraya uygulamanın ekran görüntüsünü eklersen çok havalı olur)*
@@ -22,12 +22,12 @@ GymPro, spor salonundaki antrenmanlarınızı kağıt-kalem kullanmadan, en mode
 Bu bir web sitesi gibi görünse de aslında bir mobil uygulamadır.
 
 ### Android (Chrome)
-1.  [Canlı Demo Linkine](https://[kullaniciadi].github.io/[repo-adi]) gidin.
+1.  [Canlı Demo Linkine](https://ibrahim-koca.github.io/gym-pro-app) gidin.
 2.  Tarayıcı menüsünü (3 nokta) açın.
 3.  **"Uygulamayı Yükle"** veya **"Ana Ekrana Ekle"** seçeneğine dokunun.
 
 ### iOS (Safari)
-1.  [Canlı Demo Linkine](https://[kullaniciadi].github.io/[repo-adi]) gidin.
+1.  [Canlı Demo Linkine](https://ibrahim-koca.github.io/gym-pro-app) gidin.
 2.  Alt bar'daki "Paylaş" ikonuna dokunun.
 3.  Aşağı kaydırıp **"Ana Ekrana Ekle"** (Add to Home Screen) deyin.
 
