@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GymPro V5 Optimized</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1e293b">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2964/2964514.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+
+    <style>
+	html, body {
+    		touch-action: manipulation; /* Zoom gecikmesini ve çift tık sorununu çözer */
+    		-webkit-user-select: none; /* Metin seçimini engeller (Uygulama hissi) */
+   		 user-select: none;
+	}
+        :root {
+            --bg-grad: linear-gradient(135deg, #f0fdf4 0%, #dbeafe 100%);
+            --card-bg: rgba(255, 255, 255, 0.7);
+            --card-border: 1px solid rgba(255, 255, 255, 0.8);
+            --text-main: #1e293b;
+            --text-sec: #64748b;
+            --primary: #10b981; 
+            --accent: #3b82f6;
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+            --input-bg: rgba(255,255,255,0.9);
+            --blob-color: #34d399;
+        }
+
+        [data-theme="dark"] {
+            --bg-grad: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            --card-bg: rgba(30, 41, 59, 0.6);
+            --card-border: 1px solid rgba(255, 255, 255, 0.1);
+            --text-main: #f1f5f9;
+            --text-sec: #94a3b8;
+            --primary: #00ff9d;
+            --accent: #0ea5e9;
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            --input-bg: rgba(15, 23, 42, 0.8);
+            --blob-color: #00ff9d;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; outline: none; }
+        
+        body { 
+            font-family: 'Outfit', sans-serif; 
+            background: var(--bg-grad); 
+            color: var(--text-main); 
+            padding: 90px 15px 120px 15px; 
+            min-height: 100vh;
+            transition: background 0.5s ease;
+        }
+
+        .bg-blob {
+            position: fixed; top: -10%; right: -10%; width: 300px; height: 300px;
+            background: var(--blob-color); filter: blur(90px); opacity: 0.2; z-index: -1;
+            border-radius: 50%; transition: background 0.5s;
+        }
+
+        .top-bar { 
+            position: fixed; top: 0; left: 0; width: 100%; 
+            background: var(--card-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            padding: 15px 20px; z-index: 999; 
+            border-bottom: var(--card-border);
+            box-shadow: var(--glass-shadow);
+        }
+        .bar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .app-title { font-weight: 700; font-size: 1.4rem; background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        .icon-btn { background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 8px; color: var(--text-main); transition: transform 0.2s; border-radius: 50%; }
+        .icon-btn:active { transform: scale(0.9); background: rgba(255,255,255,0.1); }
+
+        .progress-track { width: 100%; height: 6px; background: rgba(128,128,128,0.2); border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), var(--accent)); transition: width 0.4s ease; border-radius: 10px; box-shadow: 0 0 10px var(--primary); }
+
+        .container { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 15px; }
+        
+        .card { 
+            background: var(--card-bg); 
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            border: var(--card-border);
+            border-radius: 20px; padding: 18px; 
+            box-shadow: var(--glass-shadow);
+            position: relative; overflow: hidden;
+            transition: transform 0.2s;
+        }
+
+        .muscle-tag {
+            font-size: 0.7rem; font-weight: 700; padding: 3px 8px; border-radius: 6px;
+            text-transform: uppercase; letter-spacing: 0.5px; margin-left: 8px;
+            display: inline-block;
+        }
+
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid rgba(128,128,128,0.1); }
+        .ex-info { display: flex; align-items: center; gap: 10px; flex: 1; overflow: hidden; }
+        .ex-name { font-weight: 700; font-size: 1.05rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        
+        .set-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .kg-input { 
+            width: 70px; padding: 12px; border: 1px solid rgba(128,128,128,0.2); border-radius: 12px; 
+            text-align: center; font-family: inherit; font-size: 1rem; font-weight: 600;
+            background: var(--input-bg); color: var(--text-main);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .kg-input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
+
+        .check-btn { 
+            flex: 1; padding: 12px; border: 1px solid rgba(128,128,128,0.2); 
+            background: rgba(255,255,255,0.05); border-radius: 12px; 
+            font-weight: 600; font-size: 0.95rem; color: var(--text-sec); 
+            cursor: pointer; transition: all 0.3s; 
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .check-btn.done { 
+            background: var(--primary); border-color: var(--primary); color: #000; 
+            box-shadow: 0 0 15px var(--primary); font-weight: 700;
+        }
+
+        .drag-handle, .del-btn, .set-controls { display: none; }
+        .editing-mode .drag-handle { display: block; color: var(--text-sec); cursor: grab; }
+        
+        /* Geliştirilmiş Silme Butonu Stili */
+        .editing-mode .del-btn { 
+            display: block; 
+            color: #ef4444; 
+            background: rgba(239,68,68,0.1); 
+            border: none; 
+            width: 32px; 
+            height: 32px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            position: relative; 
+            z-index: 10; 
+            pointer-events: auto; /* Tıklamayı garantiye al */
+        }
+
+        /* Sürükleme esnasında butonların tıklanmasını CSS ile engelle (Daha Performanslı) */
+        body.is-dragging .del-btn {
+            pointer-events: none !important;
+            opacity: 0.5;
+        }
+
+        .editing-mode .set-controls { display: flex; justify-content: center; gap: 15px; margin-top: 5px; }
+        .mini-btn { width: 30px; height: 30px; border-radius: 8px; border: 1px solid rgba(128,128,128,0.2); background: var(--input-bg); color: var(--text-main); font-weight: bold; }
+        .editing-mode .kg-input, .editing-mode .check-btn { opacity: 0.3; pointer-events: none; }
+
+        .add-section { 
+            display: none; margin-top: 25px; 
+            background: var(--card-bg); backdrop-filter: blur(10px);
+            border: var(--card-border); border-radius: 20px; 
+            overflow: hidden; box-shadow: var(--glass-shadow);
+        }
+        .editing-mode .add-section { display: block; animation: slideUp 0.3s; }
+        
+        .tab-header { display: flex; border-bottom: 1px solid rgba(128,128,128,0.1); }
+        .tab-btn { flex: 1; padding: 12px; background: none; border: none; color: var(--text-sec); font-weight: 600; cursor: pointer; transition: 0.3s; }
+        .tab-btn.active { color: var(--primary); border-bottom: 2px solid var(--primary); background: rgba(16, 185, 129, 0.05); }
+
+        .tab-content { padding: 15px; display: none; }
+        .tab-content.active { display: flex; flex-direction: column; gap: 10px; }
+
+        .add-row { display: flex; gap: 10px; }
+        .add-input { flex: 2; padding: 12px; border-radius: 10px; border: 1px solid rgba(128,128,128,0.2); background: var(--input-bg); color: var(--text-main); }
+        .add-select { flex: 1; padding: 12px; border-radius: 10px; border: 1px solid rgba(128,128,128,0.2); background: var(--input-bg); color: var(--text-main); }
+        .add-confirm-btn { padding: 12px; background: var(--primary); color: #000; font-weight: 700; border: none; border-radius: 10px; cursor: pointer; margin-top: 5px; }
+
+        .preset-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+        .preset-chip { 
+            padding: 8px 12px; border-radius: 20px; font-size: 0.85rem; cursor: pointer; 
+            border: 1px solid rgba(128,128,128,0.2); background: rgba(255,255,255,0.05); color: var(--text-main);
+            transition: 0.2s; display: flex; align-items: center; gap: 5px;
+        }
+        .preset-chip:hover { border-color: var(--primary); transform: translateY(-2px); }
+
+        #toast { 
+            position: fixed; bottom: 25px; right: 20px; 
+            background: rgba(15, 23, 42, 0.95); color: #fff; border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(5px);
+            padding: 12px 25px; border-radius: 30px; 
+            display: none; align-items: center; gap: 15px; z-index: 1000; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            font-weight: 600;
+        }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    </style>
+</head>
+<body data-theme="light"> 
+    <div class="bg-blob"></div>
+
+    <div class="top-bar">
+        <div class="bar-header">
+            <div class="app-title"><i class="fa-solid fa-bolt"></i> GymPro</div>
+            <div style="display: flex; gap:10px;">
+                <button class="icon-btn" onclick="toggleTheme()" title="Temayı Değiştir">
+                    <i class="fa-solid fa-moon" id="theme-icon"></i>
+                </button>
+                <button class="icon-btn" onclick="toggleEdit()" id="edit-btn" title="Düzenle">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+            </div>
+        </div>
+        <div class="progress-track"><div class="progress-fill" id="progress"></div></div>
+    </div>
+
+    <div class="container" id="list"></div>
+
+    <div class="container add-section">
+        <div class="tab-header">
+            <button class="tab-btn active" onclick="switchTab('presets')">Hazır Hareketler</button>
+            <button class="tab-btn" onclick="switchTab('manual')">Manuel Ekle</button>
+        </div>
+        
+        <div id="tab-presets" class="tab-content active">
+            <p style="font-size:0.8rem; color:var(--text-sec); margin-bottom:5px;">Dokun ve ekle:</p>
+            <div class="preset-grid" id="preset-container"></div>
+        </div>
+
+        <div id="tab-manual" class="tab-content">
+            <div class="add-row">
+                <input type="text" id="new-name" class="add-input" placeholder="Hareket ismi...">
+                <select id="new-muscle" class="add-select">
+                    <option value="other">Diğer</option>
+                    <option value="chest">Göğüs</option>
+                    <option value="back">Sırt</option>
+                    <option value="legs">Bacak</option>
+                    <option value="shoulders">Omuz</option>
+                    <option value="arms">Kol</option>
+                    <option value="abs">Karın</option>
+                </select>
+            </div>
+            <button class="add-confirm-btn" onclick="addManualExercise()">Listeye Ekle</button>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 40px;">
+        <button onclick="resetDaily()" style="background:none; border:none; color:var(--text-sec); text-decoration:underline; cursor:pointer; font-size:0.85rem;">
+            Yeni Antrenman Başlat (Tikleri Sil)
+        </button>
+    </div>
+
+    <div id="toast">
+        <i class="fa-regular fa-clock"></i>
+        <span id="timer-text">60s</span>
+        <i class="fa-solid fa-xmark" onclick="stopTimer()" style="cursor:pointer; opacity:0.7; margin-left:5px;"></i>
+    </div>
+
+<script>
+    // --- VERİ VE SABİTLER ---
+    let exercises = [];
+    let editing = false;
+    let timerInt;
+
+    const muscles = {
+        chest: { label: "GÖĞÜS", color: "#fca5a5", bg: "rgba(239, 68, 68, 0.2)" },
+        back:  { label: "SIRT",  color: "#93c5fd", bg: "rgba(59, 130, 246, 0.2)" },
+        legs:  { label: "BACAK", color: "#bef264", bg: "rgba(132, 204, 22, 0.2)" },
+        shoulders: { label: "OMUZ", color: "#fdba74", bg: "rgba(249, 115, 22, 0.2)" },
+        arms:  { label: "KOL",   color: "#d8b4fe", bg: "rgba(168, 85, 247, 0.2)" },
+        abs:   { label: "KARIN", color: "#f0abfc", bg: "rgba(217, 70, 239, 0.2)" },
+        other: { label: "GENEL", color: "#cbd5e1", bg: "rgba(148, 163, 184, 0.2)" }
+    };
+
+    const presets = [
+        { name: "Bench Press", muscle: "chest" },
+        { name: "Incline Dumbbell", muscle: "chest" },
+        { name: "Lat Pulldown", muscle: "back" },
+        { name: "Seated Row", muscle: "back" },
+        { name: "Pull Up", muscle: "back" },
+        { name: "Shoulder Press", muscle: "shoulders" },
+        { name: "Lateral Raise", muscle: "shoulders" },
+        { name: "Squat", muscle: "legs" },
+        { name: "Leg Extension", muscle: "legs" },
+        { name: "Biceps Curl", muscle: "arms" },
+        { name: "Triceps Pushdown", muscle: "arms" }
+    ];
+
+    // --- BAŞLANGIÇ ---
+    document.addEventListener('DOMContentLoaded', () => {
+        loadTheme();
+        loadData();
+        render();
+        renderPresets();
+        
+        // Optimize Edilmiş Sürükle-Bırak
+        const listEl = document.getElementById('list');
+        Sortable.create(listEl, {
+            animation: 200, 
+            handle: '.drag-handle',
+            draggable: '.card',
+            onStart: function() {
+                // Sürükleme başladığında CSS class'ı ekle (Performanslı Yöntem)
+                document.body.classList.add('is-dragging');
+            },
+            onEnd: function(evt) {
+                // Sürükleme bittiğinde class'ı kaldır
+                document.body.classList.remove('is-dragging');
+                
+                // Veriyi güncelle
+                const item = exercises.splice(evt.oldIndex, 1)[0];
+                exercises.splice(evt.newIndex, 0, item);
+                saveData();
+            }
+        });
+
+        // Event Delegation (Senin Çözümün - Optimize Edildi)
+        document.body.addEventListener('click', function(e) {
+            const deleteBtn = e.target.closest('.del-btn');
+            if (deleteBtn && deleteBtn.hasAttribute('data-delete-id')) {
+                e.stopPropagation(); // Event çakışmasını önle
+                e.preventDefault();
+                const exId = deleteBtn.getAttribute('data-delete-id');
+                delExercise(exId);
+            }
+        });
+    });
+
+    // --- TEMEL FONKSİYONLAR ---
+    function toggleTheme() {
+        const body = document.body;
+        const newTheme = body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+        body.setAttribute('data-theme', newTheme);
+        document.getElementById('theme-icon').className = newTheme === 'light' ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+        localStorage.setItem('gymProTheme', newTheme);
+    }
+
+    function loadTheme() {
+        const saved = localStorage.getItem('gymProTheme') || 'light';
+        document.body.setAttribute('data-theme', saved);
+        document.getElementById('theme-icon').className = saved === 'light' ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+    }
+
+    function loadData() {
+        const raw = localStorage.getItem('gymProV4_Data');
+        if(raw) {
+            exercises = JSON.parse(raw);
+            // Veri bütünlüğü kontrolü
+            exercises.forEach(e => { if(!e.muscle) e.muscle = 'other'; });
+        } else {
+            // Varsayılan veriler
+            exercises = [
+                { id: "1715001a", name: "Shoulder Press", sets: 3, muscle: "shoulders" },
+                { id: "1715002b", name: "Lat Pulldown", sets: 4, muscle: "back" },
+                { id: "1715003c", name: "Bench Press", sets: 3, muscle: "chest" }
+            ];
+        }
+        loadProgress();
+    }
+
+    function saveData() { localStorage.setItem('gymProV4_Data', JSON.stringify(exercises)); }
+
+    function render() {
+        const list = document.getElementById('list');
+        list.innerHTML = "";
+
+        if (exercises.length === 0) {
+            list.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-sec);">Henüz hareket eklemedin.</div>`;
+            updateBar(); // Barı sıfırla
+            return;
+        }
+
+        exercises.forEach((ex) => {
+            const mInfo = muscles[ex.muscle] || muscles.other;
+            const card = document.createElement('div');
+            card.className = 'card';
+            
+            let setsHtml = '';
+            for(let i=1; i<=ex.sets; i++) {
+                const uid = `ex-${ex.id}-s-${i}`;
+                setsHtml += `
+                    <div class="set-row">
+                        <input type="number" class="kg-input" id="kg-${uid}" placeholder="kg" onchange="saveProgress()">
+                        <button class="check-btn" id="btn-${uid}" onclick="toggleCheck('${uid}')">
+                            <span>${i}. Set</span>
+                        </button>
+                    </div>
+                `;
+            }
+
+            // HTML Yapısı
+            card.innerHTML = `
+                <div class="card-header">
+                    <div class="ex-info">
+                        <i class="fa-solid fa-bars drag-handle"></i>
+                        <div>
+                            <span class="ex-name" contenteditable="${editing}" onblur="updateName('${ex.id}', this.innerText)">${ex.name}</span>
+                            <span class="muscle-tag" style="color:${mInfo.color}; background:${mInfo.bg}">${mInfo.label}</span>
+                        </div>
+                    </div>
+                    <button class="del-btn" type="button" data-delete-id="${ex.id}">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+                <div>${setsHtml}</div>
+                <div class="set-controls">
+                    <button class="mini-btn" onclick="changeSetCount('${ex.id}', -1)">-</button>
+                    <span style="font-size:0.9rem; font-weight:bold; color:var(--text-sec);">${ex.sets} Set</span>
+                    <button class="mini-btn" onclick="changeSetCount('${ex.id}', 1)">+</button>
+                </div>
+            `;
+            list.appendChild(card);
+        });
+        loadProgress();
+    }
+
+    // --- İŞLEM FONKSİYONLARI ---
+    function delExercise(id) {
+        if(confirm("Bu egzersizi silmek istiyor musun?")) {
+            // String karşılaştırması güvenlidir
+            const index = exercises.findIndex(e => String(e.id) === String(id));
+            if (index > -1) {
+                exercises.splice(index, 1);
+                saveData();
+                render();
+            }
+        }
+    }
+
+    function changeSetCount(id, delta) {
+        const index = exercises.findIndex(e => String(e.id) === String(id));
+        if(index > -1) {
+            const current = exercises[index].sets;
+            const newVal = current + delta;
+            if(newVal > 0 && newVal <= 10) {
+                exercises[index].sets = newVal;
+                saveData();
+                render();
+            }
+        }
+    }
+
+    function updateName(id, txt) {
+        const index = exercises.findIndex(e => String(e.id) === String(id));
+        if(index > -1) {
+            exercises[index].name = txt.trim(); // HTML taglerini temizler (Browser davranışı)
+            saveData();
+        }
+    }
+
+    function generateId() {
+        // Güvenli Benzersiz ID (Timestamp + Random)
+        return Date.now().toString() + Math.random().toString(36).substr(2, 5);
+    }
+
+    function addExerciseDirectly(name, muscle) {
+        const newId = generateId();
+        exercises.push({ id: newId, name: name, sets: 3, muscle: muscle });
+        saveData();
+        render();
+        setTimeout(() => window.scrollTo(0, document.body.scrollHeight), 100);
+        if(navigator.vibrate) navigator.vibrate(50);
+    }
+
+    function addManualExercise() {
+        const name = document.getElementById('new-name').value.trim();
+        const muscle = document.getElementById('new-muscle').value;
+        if(name) {
+            addExerciseDirectly(name, muscle);
+            document.getElementById('new-name').value = "";
+        }
+    }
+
+    // --- UI YARDIMCILARI ---
+    function switchTab(tabName) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        document.getElementById(`tab-${tabName}`).classList.add('active');
+        event.target.classList.add('active'); // Tıklanan butonu aktif yap
+    }
+
+    function renderPresets() {
+        const container = document.getElementById('preset-container');
+        container.innerHTML = "";
+        presets.forEach(p => {
+            const mInfo = muscles[p.muscle];
+            const chip = document.createElement('div');
+            chip.className = 'preset-chip';
+            chip.innerHTML = `<i class="fa-solid fa-plus" style="color:${mInfo.color}"></i> ${p.name}`;
+            chip.onclick = () => addExerciseDirectly(p.name, p.muscle);
+            container.appendChild(chip);
+        });
+    }
+
+    function toggleEdit() {
+        editing = !editing;
+        document.body.classList.toggle('editing-mode');
+        const btn = document.getElementById('edit-btn');
+        btn.style.color = editing ? 'var(--primary)' : 'var(--text-main)';
+        render(); // Inputların durumunu güncellemek için render gerekli
+    }
+
+    // --- CHECK & PROGRESS ---
+    function toggleCheck(uid) {
+        if(editing) return;
+        const btn = document.getElementById(`btn-${uid}`);
+        const isDone = btn.classList.contains('done');
+        
+        if(!isDone) {
+            btn.classList.add('done');
+            btn.innerHTML = `Tamam <i class="fa-solid fa-check"></i>`;
+            startTimer(60);
+            if(navigator.vibrate) navigator.vibrate(50);
+        } else {
+            btn.classList.remove('done');
+            const setNum = uid.split('-s-')[1];
+            btn.innerHTML = `<span>${setNum}. Set</span>`;
+            stopTimer();
+        }
+        saveProgress();
+    }
+
+    function saveProgress() {
+        const checks = [];
+        document.querySelectorAll('.check-btn.done').forEach(b => checks.push(b.id));
+        const weights = {};
+        document.querySelectorAll('.kg-input').forEach(i => { if(i.value) weights[i.id] = i.value });
+        localStorage.setItem('gymProV4_Progress', JSON.stringify({ checks, weights }));
+        updateBar();
+    }
+
+    function loadProgress() {
+        const raw = localStorage.getItem('gymProV4_Progress');
+        if(!raw) return;
+        const data = JSON.parse(raw);
+        if(data.checks) {
+            data.checks.forEach(id => {
+                const btn = document.getElementById(id);
+                if(btn) {
+                    btn.classList.add('done');
+                    btn.innerHTML = `Tamam <i class="fa-solid fa-check"></i>`;
+                }
+            });
+        }
+        if(data.weights) {
+            for(const [k,v] of Object.entries(data.weights)) {
+                const inp = document.getElementById(k);
+                if(inp) inp.value = v;
+            }
+        }
+        updateBar();
+    }
+
+    function updateBar() {
+        let totalSets = 0;
+        exercises.forEach(e => totalSets += e.sets);
+        
+        // Sıfıra bölünme hatasını önle
+        if(totalSets === 0) { 
+            document.getElementById('progress').style.width = "0%"; 
+            return; 
+        }
+        
+        const doneSets = document.querySelectorAll('.check-btn.done').length;
+        const pct = Math.round((doneSets / totalSets) * 100);
+        document.getElementById('progress').style.width = pct + "%";
+    }
+
+    function resetDaily() {
+        if(confirm("Tüm tikleri sıfırlayayım mı?")) {
+            localStorage.removeItem('gymProV4_Progress');
+            // Sayfayı yenilemek yerine sadece render çağırarak hızlandır
+            render(); 
+        }
+    }
+
+    // --- TIMER ---
+    function startTimer(sec) {
+        stopTimer();
+        const toast = document.getElementById('toast');
+        const txt = document.getElementById('timer-text');
+        toast.style.display = 'flex';
+        let t = sec;
+        txt.innerText = t + "s";
+        timerInt = setInterval(() => {
+            t--;
+            txt.innerText = t + "s";
+            if(t<=0) {
+                stopTimer();
+                if(navigator.vibrate) navigator.vibrate([200,100,200]);
+            }
+        }, 1000);
+    }
+
+    function stopTimer() {
+        clearInterval(timerInt);
+        document.getElementById('toast').style.display = 'none';
+    }
+	
+	// --- PWA KAYIT (MOTORU BAŞLAT) ---
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+            .then(reg => console.log('SW Başarılı: ', reg.scope))
+            .catch(err => console.log('SW Hatası: ', err));
+    });
+}
+</script>
+</body>
+</html>
