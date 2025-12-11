@@ -25,12 +25,12 @@ GymPro, spor salonundaki antrenmanlarınızı kağıt-kalem kullanmadan, en mode
 Bu bir web sitesi gibi görünse de aslında bir mobil uygulamadır.
 
 ### Android (Chrome)
-1.  [Canlı Demo Linkine](brilliant-choux-4501d9.netlify.app) gidin.
+1.  [Canlı Demo Linkine](http://brilliant-choux-4501d9.netlify.app) gidin.
 2.  Tarayıcı menüsünü (3 nokta) açın.
 3.  **"Uygulamayı Yükle"** veya **"Ana Ekrana Ekle"** seçeneğine dokunun.
 
 ### iOS (Safari)
-1.  [Canlı Demo Linkine](brilliant-choux-4501d9.netlify.app) gidin.
+1.  [Canlı Demo Linkine](http://brilliant-choux-4501d9.netlify.app) gidin.
 2.  Alt bar'daki "Paylaş" ikonuna dokunun.
 3.  Aşağı kaydırıp **"Ana Ekrana Ekle"** (Add to Home Screen) deyin.
 
