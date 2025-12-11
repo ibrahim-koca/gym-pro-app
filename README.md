@@ -4,8 +4,10 @@ GymPro, spor salonundaki antrenmanlarınızı kağıt-kalem kullanmadan, en mode
 
 🔗 **Canlı Demo:** [Uygulamayı Buradan Dene](https://ibrahim-koca.github.io/gym-pro-app)
 
-![GymPro Cover](https://via.placeholder.com/800x400?text=GymPro+App+Screenshot+Here)
-![Uygulama Görünümü](assets/appDarkMode.png)
+<p align="center">
+  <img src="assets/resim1.png" width="45%" alt="Light Mode">
+  &nbsp; &nbsp; <img src="assets/appDarkMode.png" width="45%" alt="Dark Mode">
+</p>
 
 ## 🌟 Özellikler
 
