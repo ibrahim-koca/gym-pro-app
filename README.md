@@ -1,4 +1,4 @@
-# 🏋️‍♂️ GymPro - Ultimate Fitness Tracker (PWA)
+# 🏋️‍♂️ GymPro - Fitness Takip Uygulaması (PWA)
 
 GymPro, spor salonundaki antrenmanlarınızı kağıt-kalem kullanmadan, en modern ve hızlı şekilde takip etmenizi sağlayan, tamamen çevrimdışı çalışabilen bir **Progressive Web App (PWA)** uygulamasıdır.
 
