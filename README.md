@@ -2,7 +2,7 @@
 
 GymPro, spor salonundaki antrenmanlarınızı kağıt-kalem kullanmadan, en modern ve hızlı şekilde takip etmenizi sağlayan, tamamen çevrimdışı çalışabilen bir **Progressive Web App (PWA)** uygulamasıdır.
 
-🔗 **Canlı Demo:** [Uygulamayı Buradan Dene](https://ibrahim-koca.github.io/gym-pro-app)
+🔗 **Canlı Demo:** [Uygulamayı Buradan Dene](http://brilliant-choux-4501d9.netlify.app)
 
 <p align="center">
   <img src="https://github.com/ibrahim-koca/gym-pro-app/blob/main/assets/appDarkMode.jpg?raw=true" width="30%" />
